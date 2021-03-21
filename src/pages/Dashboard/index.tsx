@@ -7,15 +7,8 @@ import ModalAddFood from '../../components/ModalAddFood';
 import ModalEditFood from '../../components/ModalEditFood';
 import { FoodsContainer } from './styles';
 import { AxiosResponse } from 'axios';
-
-interface FoodData {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  available: boolean;
-  image: string;
-}
+import { FoodData } from '../../@types/FoodData';
+import { FoodInput } from '../../@types/FoodInput';
 
 function Dashboard() {
   const [foods, setFoods] = useState<FoodData[]>([]);
@@ -29,9 +22,9 @@ function Dashboard() {
       .then((response: AxiosResponse<FoodData[]>) => setFoods(response.data));
   }, []);
 
-  const handleAddFood = async food => {
+  const handleAddFood = async (food: FoodInput) => {
     try {
-      const response = await api.post('/foods', {
+      const response: AxiosResponse<FoodData> = await api.post('/foods', {
         ...food,
         available: true,
       });
@@ -42,7 +35,7 @@ function Dashboard() {
     }
   };
 
-  const handleUpdateFood = async (food: FoodData) => {
+  const handleUpdateFood = async (food: FoodInput) => {
     try {
       const foodUpdated: AxiosResponse<FoodData> = await api.put(
         `/foods/${editingFood.id}`,
