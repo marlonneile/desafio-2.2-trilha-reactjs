@@ -6,7 +6,6 @@ import Food from '../../components/Food';
 import ModalAddFood from '../../components/ModalAddFood';
 import ModalEditFood from '../../components/ModalEditFood';
 import { FoodsContainer } from './styles';
-import { AxiosResponse } from 'axios';
 import { FoodData } from '../../@types/FoodData';
 import { FoodInput } from '../../@types/FoodInput';
 
@@ -17,14 +16,12 @@ function Dashboard() {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
-    api
-      .get('/foods')
-      .then((response: AxiosResponse<FoodData[]>) => setFoods(response.data));
+    api.get<FoodData[]>('/foods').then(response => setFoods(response.data));
   }, []);
 
   const handleAddFood = async (food: FoodInput) => {
     try {
-      const response: AxiosResponse<FoodData> = await api.post('/foods', {
+      const response = await api.post<FoodData>('/foods', {
         ...food,
         available: true,
       });
@@ -37,13 +34,10 @@ function Dashboard() {
 
   const handleUpdateFood = async (food: FoodInput) => {
     try {
-      const foodUpdated: AxiosResponse<FoodData> = await api.put(
-        `/foods/${editingFood.id}`,
-        {
-          ...editingFood,
-          ...food,
-        }
-      );
+      const foodUpdated = await api.put<FoodData>(`/foods/${editingFood.id}`, {
+        ...editingFood,
+        ...food,
+      });
 
       const foodsUpdated = foods.map(f =>
         f.id !== foodUpdated.data.id ? f : foodUpdated.data
